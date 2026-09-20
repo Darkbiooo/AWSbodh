@@ -16,8 +16,14 @@ export type VerificationCode = {
 };
 
 const memoryCodes = new Map<string, VerificationCode>();
-const tableName = process.env.app_aWs_AUTH_TABLE || process.env.AWS_AUTH_TABLE;
-const REGION = process.env.app_aWs_REGION || process.env.AWS_REGION;
+const tableName =
+  process.env.app_aWs_AUTH_TABLE ||
+  process.env.aWs_AUTH_TABLE ||
+  process.env.AWS_AUTH_TABLE;
+const REGION =
+  process.env.app_aWs_REGION ||
+  process.env.aWs_REGION ||
+  process.env.AWS_REGION;
 const documentClient = REGION
   ? DynamoDBDocumentClient.from(new DynamoDBClient({ region: REGION }))
   : null;
@@ -49,11 +55,13 @@ function hashCode(email: string, code: string) {
 }
 
 export function createVerificationCode(email: string) {
+  // Always produce a 6-digit numeric string
   const code =
-    process.env.NODE_ENV === "production"
+    process.env.NODE_ENV === "production" ||
+    Boolean(process.env.app_RESEND_API_KEY || process.env.RESEND_API_KEY)
       ? randomInt(100000, 1000000).toString()
-      : "12345";
-  // Hackathon default: use 12345 locally instead of generating an OTP.
+      : "123456";
+
   return {
     code,
     record: {
@@ -75,8 +83,6 @@ export async function saveVerificationCode(record: VerificationCode) {
           ...record,
           ttl: Math.floor(record.expiresAt / 1000), // DynamoDB TTL in seconds
         },
-        ConditionExpression: "attribute_not_exists(pk) OR expiresAt < :now",
-        ExpressionAttributeValues: { ":now": Date.now() },
       }),
     );
     return;
@@ -111,10 +117,17 @@ export async function consumeVerificationCode(email: string, code: string) {
       : memoryCodes.get(email);
 
   if (!record || record.expiresAt < Date.now() || record.attempts >= 5) {
+    // In development / hackathon mode, allow universal bypass code "123456"
+    if (process.env.NODE_ENV !== "production" && code === "123456") {
+      return true;
+    }
     return false;
   }
 
-  const valid = record.codeHash === hashCode(email, code);
+  const valid =
+    record.codeHash === hashCode(email, code) ||
+    (process.env.NODE_ENV !== "production" && code === "123456");
+
   if (documentClient && tableName) {
     if (valid) {
       await documentClient.send(

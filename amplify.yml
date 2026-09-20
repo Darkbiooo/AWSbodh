@@ -4,23 +4,39 @@ frontend:
   phases:
     preBuild:
       commands:
-        - npm ci
+        - npm ci --cache .npm --prefer-offline || npm install
 
     build:
       commands:
         - |
-          env | grep -e app_aWs_REGION \
-                 -e app_aWs_ACCESS_KEY_ID \
-                 -e app_aWs_SECRET_ACCESS_KEY \
-                 -e app_aWs_S3_BUCKET \
-                 -e app_aWs_DYNAMODB_TABLE \
-                 -e app_aWs_AUTH_TABLE \
-                 -e app_aWs_STUDENT_RECORD_TABLE \
-                 -e app_JWT_SECRET \
-                 -e app_BEDROCK_MODEL_ID \
-                 -e app_AUTH_SECRET \
-                 -e app_RESEND_API_KEY \
-                 -e app_RESEND_FROM_EMAIL >> .env.production
+          # Capture all relevant environment variables passed into Amplify build
+          env | grep -E '^(app_|aWs_|AWS_|RESEND_|JWT_|AUTH_|BEDROCK_|NEXT_)' >> .env.production || true
+
+          # Synchronize prefixed (app_aWs_*) and standard (AWS_*) variables so both are available at SSR runtime
+          [ -n "$app_aWs_REGION" ] && echo "AWS_REGION=$app_aWs_REGION" >> .env.production || true
+          [ -n "$AWS_REGION" ] && echo "app_aWs_REGION=$AWS_REGION" >> .env.production || true
+          [ -n "$app_aWs_ACCESS_KEY_ID" ] && echo "AWS_ACCESS_KEY_ID=$app_aWs_ACCESS_KEY_ID" >> .env.production || true
+          [ -n "$AWS_ACCESS_KEY_ID" ] && echo "app_aWs_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID" >> .env.production || true
+          [ -n "$app_aWs_SECRET_ACCESS_KEY" ] && echo "AWS_SECRET_ACCESS_KEY=$app_aWs_SECRET_ACCESS_KEY" >> .env.production || true
+          [ -n "$AWS_SECRET_ACCESS_KEY" ] && echo "app_aWs_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY" >> .env.production || true
+          [ -n "$app_aWs_S3_BUCKET" ] && echo "AWS_S3_BUCKET=$app_aWs_S3_BUCKET" >> .env.production || true
+          [ -n "$AWS_S3_BUCKET" ] && echo "app_aWs_S3_BUCKET=$AWS_S3_BUCKET" >> .env.production || true
+          [ -n "$app_aWs_DYNAMODB_TABLE" ] && echo "AWS_DYNAMODB_TABLE=$app_aWs_DYNAMODB_TABLE" >> .env.production || true
+          [ -n "$AWS_DYNAMODB_TABLE" ] && echo "app_aWs_DYNAMODB_TABLE=$AWS_DYNAMODB_TABLE" >> .env.production || true
+          [ -n "$app_aWs_AUTH_TABLE" ] && echo "AWS_AUTH_TABLE=$app_aWs_AUTH_TABLE" >> .env.production || true
+          [ -n "$AWS_AUTH_TABLE" ] && echo "app_aWs_AUTH_TABLE=$AWS_AUTH_TABLE" >> .env.production || true
+          [ -n "$app_aWs_STUDENT_RECORD_TABLE" ] && echo "AWS_STUDENT_RECORD_TABLE=$app_aWs_STUDENT_RECORD_TABLE" >> .env.production || true
+          [ -n "$AWS_STUDENT_RECORD_TABLE" ] && echo "app_aWs_STUDENT_RECORD_TABLE=$AWS_STUDENT_RECORD_TABLE" >> .env.production || true
+          [ -n "$app_BEDROCK_MODEL_ID" ] && echo "BEDROCK_MODEL_ID=$app_BEDROCK_MODEL_ID" >> .env.production || true
+          [ -n "$BEDROCK_MODEL_ID" ] && echo "app_BEDROCK_MODEL_ID=$BEDROCK_MODEL_ID" >> .env.production || true
+          [ -n "$app_AUTH_SECRET" ] && echo "AUTH_SECRET=$app_AUTH_SECRET" >> .env.production || true
+          [ -n "$AUTH_SECRET" ] && echo "app_AUTH_SECRET=$AUTH_SECRET" >> .env.production || true
+          [ -n "$app_JWT_SECRET" ] && echo "JWT_SECRET=$app_JWT_SECRET" >> .env.production || true
+          [ -n "$JWT_SECRET" ] && echo "app_JWT_SECRET=$JWT_SECRET" >> .env.production || true
+          [ -n "$app_RESEND_API_KEY" ] && echo "RESEND_API_KEY=$app_RESEND_API_KEY" >> .env.production || true
+          [ -n "$RESEND_API_KEY" ] && echo "app_RESEND_API_KEY=$RESEND_API_KEY" >> .env.production || true
+          [ -n "$app_RESEND_FROM_EMAIL" ] && echo "RESEND_FROM_EMAIL=$app_RESEND_FROM_EMAIL" >> .env.production || true
+          [ -n "$RESEND_FROM_EMAIL" ] && echo "app_RESEND_FROM_EMAIL=$RESEND_FROM_EMAIL" >> .env.production || true
         - npm run build
 
   artifacts:
@@ -30,5 +46,5 @@ frontend:
 
   cache:
     paths:
-      - node_modules/**/*
       - .next/cache/**/*
+      - .npm/**/*
