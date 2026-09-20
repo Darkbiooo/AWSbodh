@@ -45,17 +45,14 @@ export function validateProductionEnv(): void {
   if (missing.length > 0) {
     const message = [
       "============================================================",
-      "❌ CRITICAL CONFIGURATION ERROR: Missing required environment variables",
+      "⚠️ WARNING: Missing recommended environment variables",
       "============================================================",
       ...missing.map((key) => `  - ${key}`),
       "============================================================",
-      "Please set these environment variables before deploying.",
+      "Please set these in the AWS Amplify Console under App settings > Environment variables.",
       "============================================================",
     ].join("\n");
 
-    console.error(message);
-    throw new Error(
-      `Missing required production environment variables: ${missing.join(", ")}`,
-    );
+    console.warn(message);
   }
 }

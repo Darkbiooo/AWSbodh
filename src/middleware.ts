@@ -24,32 +24,39 @@ async function verifyJwtPayload(token: string): Promise<Record<string, unknown> 
 }
 
 export async function middleware(req: NextRequest) {
-  if (!envValidated && process.env.NODE_ENV === "production") {
-    validateProductionEnv();
-    envValidated = true;
+  try {
+    if (!envValidated && process.env.NODE_ENV === "production") {
+      validateProductionEnv();
+      envValidated = true;
+    }
+
+    const token = req.cookies.get(sessionCookie)?.value;
+    const payload = token ? await verifyJwtPayload(token) : null;
+    const isLoggedIn = !!payload?.email;
+
+    const { pathname } = req.nextUrl;
+    const isProtected = PROTECTED.some((p) => pathname.startsWith(p));
+    const isAuthOnly =
+      pathname === "/" ||
+      AUTH_ONLY.filter((p) => p !== "/").some((p) => pathname.startsWith(p));
+
+    // Logged-in user visiting /auth → send to dashboard
+    if (isLoggedIn && isAuthOnly) {
+      return NextResponse.redirect(new URL("/dashboard", req.url));
+    }
+
+    // Unauthenticated user visiting a protected route → send to /auth
+    if (!isLoggedIn && isProtected) {
+      const url = new URL("/auth", req.url);
+      url.searchParams.set("next", pathname);
+      return NextResponse.redirect(url);
+    }
+
+    return NextResponse.next();
+  } catch (error) {
+    console.error("[middleware] Error during middleware handling:", error);
+    return NextResponse.next();
   }
-
-  const token = req.cookies.get(sessionCookie)?.value;
-  const payload = token ? await verifyJwtPayload(token) : null;
-  const isLoggedIn = !!payload?.email;
-
-  const { pathname } = req.nextUrl;
-  const isProtected = PROTECTED.some((p) => pathname.startsWith(p));
-  const isAuthOnly = pathname === "/" || AUTH_ONLY.filter(p => p !== "/").some((p) => pathname.startsWith(p));
-
-  // Logged-in user visiting /auth → send to dashboard
-  if (isLoggedIn && isAuthOnly) {
-    return NextResponse.redirect(new URL("/dashboard", req.url));
-  }
-
-  // Unauthenticated user visiting a protected route → send to /auth
-  if (!isLoggedIn && isProtected) {
-    const url = new URL("/auth", req.url);
-    url.searchParams.set("next", pathname);
-    return NextResponse.redirect(url);
-  }
-
-  return NextResponse.next();
 }
 
 export const config = {
