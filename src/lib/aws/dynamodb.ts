@@ -59,11 +59,7 @@ const db = rawClient ? DynamoDBDocumentClient.from(rawClient) : null;
 
 async function dbGet<T>(table: string, pk: string): Promise<T | null> {
   if (!db || !table) {
-    if (process.env.NODE_ENV === "production") {
-      throw new Error(
-        `[dynamodb] DynamoDB client or table is not configured (table: ${table || "undefined"}).`,
-      );
-    }
+    console.warn(`[dynamodb] Client or table is not configured for dbGet (table: ${table || "undefined"}).`);
     return null;
   }
   try {
@@ -76,9 +72,6 @@ async function dbGet<T>(table: string, pk: string): Promise<T | null> {
       `[dynamodb] Error in dbGet on ${table} for key ${pk}:`,
       error,
     );
-    if (process.env.NODE_ENV === "production") {
-      throw error;
-    }
     return null;
   }
 }
@@ -88,30 +81,19 @@ async function dbPut(
   item: Record<string, unknown>,
 ): Promise<void> {
   if (!db || !table) {
-    if (process.env.NODE_ENV === "production") {
-      throw new Error(
-        `[dynamodb] DynamoDB client or table is not configured (table: ${table || "undefined"}).`,
-      );
-    }
+    console.warn(`[dynamodb] Client or table is not configured for dbPut (table: ${table || "undefined"}).`);
     return;
   }
   try {
     await db.send(new PutCommand({ TableName: table, Item: item }));
   } catch (error) {
     console.error(`[dynamodb] Error in dbPut on ${table}:`, error);
-    if (process.env.NODE_ENV === "production") {
-      throw error;
-    }
   }
 }
 
 async function dbDelete(table: string, pk: string): Promise<void> {
   if (!db || !table) {
-    if (process.env.NODE_ENV === "production") {
-      throw new Error(
-        `[dynamodb] DynamoDB client or table is not configured (table: ${table || "undefined"}).`,
-      );
-    }
+    console.warn(`[dynamodb] Client or table is not configured for dbDelete (table: ${table || "undefined"}).`);
     return;
   }
   try {
@@ -121,9 +103,6 @@ async function dbDelete(table: string, pk: string): Promise<void> {
       `[dynamodb] Error in dbDelete on ${table} for key ${pk}:`,
       error,
     );
-    if (process.env.NODE_ENV === "production") {
-      throw error;
-    }
   }
 }
 
@@ -227,11 +206,7 @@ export function computeWeakTopics(
  */
 export async function putStudentRecord(record: StudentRecord): Promise<void> {
   if (!db || !STUDENT_RECORD_TABLE) {
-    if (process.env.NODE_ENV === "production") {
-      throw new Error(
-        "[dynamodb] STUDENT_RECORD_TABLE or DynamoDB client is not configured.",
-      );
-    }
+    console.warn("[dynamodb] STUDENT_RECORD_TABLE or DynamoDB client is not configured.");
     return;
   }
   try {
@@ -243,9 +218,6 @@ export async function putStudentRecord(record: StudentRecord): Promise<void> {
     );
   } catch (error) {
     console.error("[dynamodb] Error in putStudentRecord:", error);
-    if (process.env.NODE_ENV === "production") {
-      throw error;
-    }
   }
 }
 
@@ -257,11 +229,7 @@ export async function getStudentRecord(
   studentId: string,
 ): Promise<StudentRecord | null> {
   if (!db || !STUDENT_RECORD_TABLE) {
-    if (process.env.NODE_ENV === "production") {
-      throw new Error(
-        "[dynamodb] STUDENT_RECORD_TABLE or DynamoDB client is not configured.",
-      );
-    }
+    console.warn("[dynamodb] STUDENT_RECORD_TABLE or DynamoDB client is not configured.");
     return null;
   }
   try {
@@ -277,9 +245,6 @@ export async function getStudentRecord(
       `[dynamodb] Error in getStudentRecord for ${studentId}:`,
       error,
     );
-    if (process.env.NODE_ENV === "production") {
-      throw error;
-    }
     return null;
   }
 }
@@ -306,11 +271,7 @@ export async function updateTopicScore({
   score: number;
 }): Promise<StudentRecord | null> {
   if (!db || !STUDENT_RECORD_TABLE) {
-    if (process.env.NODE_ENV === "production") {
-      throw new Error(
-        "[dynamodb] STUDENT_RECORD_TABLE or DynamoDB client is not configured.",
-      );
-    }
+    console.warn("[dynamodb] STUDENT_RECORD_TABLE or DynamoDB client is not configured.");
     return null;
   }
 
@@ -443,11 +404,7 @@ export async function recordLogin({
   language: "en" | "hi";
 }): Promise<void> {
   if (!db || !STUDENT_RECORD_TABLE) {
-    if (process.env.NODE_ENV === "production") {
-      throw new Error(
-        "[dynamodb] STUDENT_RECORD_TABLE or DynamoDB client is not configured.",
-      );
-    }
+    console.warn("[dynamodb] STUDENT_RECORD_TABLE or DynamoDB client is not configured.");
     return;
   }
 
@@ -485,8 +442,5 @@ export async function recordLogin({
     );
   } catch (error) {
     console.error(`[dynamodb] Error in recordLogin for ${studentId}:`, error);
-    if (process.env.NODE_ENV === "production") {
-      throw error;
-    }
   }
 }
