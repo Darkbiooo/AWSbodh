@@ -17,11 +17,11 @@ export function validateProductionEnv(): void {
   const missing: string[] = [];
 
   const requiredVars = [
-    { name: "AWS_REGION", keys: ["AWS_REGION", "app_aWs_REGION", "aWs_REGION"] },
-    { name: "AWS_S3_BUCKET", keys: ["AWS_S3_BUCKET", "app_aWs_S3_BUCKET", "aWs_S3_BUCKET"] },
-    { name: "AWS_DYNAMODB_TABLE", keys: ["AWS_DYNAMODB_TABLE", "app_aWs_DYNAMODB_TABLE", "aWs_DYNAMODB_TABLE"] },
-    { name: "AWS_AUTH_TABLE", keys: ["AWS_AUTH_TABLE", "app_aWs_AUTH_TABLE", "aWs_AUTH_TABLE"] },
-    { name: "AWS_STUDENT_RECORD_TABLE", keys: ["AWS_STUDENT_RECORD_TABLE", "app_aWs_STUDENT_RECORD_TABLE", "aWs_STUDENT_RECORD_TABLE"] },
+    { name: "APP_AWS_REGION", keys: ["APP_AWS_REGION", "AWS_REGION", "app_aWs_REGION", "aWs_REGION"] },
+    { name: "APP_AWS_S3_BUCKET", keys: ["APP_AWS_S3_BUCKET", "AWS_S3_BUCKET", "app_aWs_S3_BUCKET", "aWs_S3_BUCKET"] },
+    { name: "APP_AWS_DYNAMODB_TABLE", keys: ["APP_AWS_DYNAMODB_TABLE", "AWS_DYNAMODB_TABLE", "app_aWs_DYNAMODB_TABLE", "aWs_DYNAMODB_TABLE"] },
+    { name: "APP_AWS_AUTH_TABLE", keys: ["APP_AWS_AUTH_TABLE", "AWS_AUTH_TABLE", "app_aWs_AUTH_TABLE", "aWs_AUTH_TABLE"] },
+    { name: "APP_AWS_STUDENT_RECORD_TABLE", keys: ["APP_AWS_STUDENT_RECORD_TABLE", "AWS_STUDENT_RECORD_TABLE", "app_aWs_STUDENT_RECORD_TABLE", "aWs_STUDENT_RECORD_TABLE"] },
     { name: "BEDROCK_MODEL_ID", keys: ["BEDROCK_MODEL_ID", "app_BEDROCK_MODEL_ID"] },
     { name: "RESEND_API_KEY", keys: ["RESEND_API_KEY", "app_RESEND_API_KEY"] },
   ];

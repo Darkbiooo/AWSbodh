@@ -17,18 +17,22 @@ export type VerificationCode = {
 
 const memoryCodes = new Map<string, VerificationCode>();
 const tableName =
+  process.env.APP_AWS_AUTH_TABLE ||
   process.env.AWS_AUTH_TABLE ||
   process.env.app_aWs_AUTH_TABLE ||
   process.env.aWs_AUTH_TABLE;
 const REGION =
+  process.env.APP_AWS_REGION ||
   process.env.AWS_REGION ||
   process.env.app_aWs_REGION ||
   process.env.aWs_REGION;
 const accessKeyId =
+  process.env.APP_AWS_ACCESS_KEY_ID ||
   process.env.AWS_ACCESS_KEY_ID ||
   process.env.app_aWs_ACCESS_KEY_ID ||
   process.env.aWs_ACCESS_KEY_ID;
 const secretAccessKey =
+  process.env.APP_AWS_SECRET_ACCESS_KEY ||
   process.env.AWS_SECRET_ACCESS_KEY ||
   process.env.app_aWs_SECRET_ACCESS_KEY ||
   process.env.aWs_SECRET_ACCESS_KEY;

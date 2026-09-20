@@ -23,10 +23,10 @@ set -euo pipefail
 
 # ── Defaults (override with env vars) ─────────────────────────────────────────
 
-REGION="${AWS_REGION:-${app_aWs_REGION:-ap-southeast-2}}"
-S3_BUCKET="${AWS_S3_BUCKET:-${app_aWs_S3_BUCKET:-regional-dsa-learning}}"
-DYNAMO_STUDENT_TABLE="${AWS_DYNAMODB_TABLE:-${app_aWs_DYNAMODB_TABLE:-bodh-students}}"
-DYNAMO_AUTH_TABLE="${AWS_AUTH_TABLE:-${app_aWs_AUTH_TABLE:-bodh-auth}}"
+REGION="${APP_AWS_REGION:-${AWS_REGION:-${app_aWs_REGION:-ap-southeast-2}}}"
+S3_BUCKET="${APP_AWS_S3_BUCKET:-${AWS_S3_BUCKET:-${app_aWs_S3_BUCKET:-regional-dsa-learning}}}"
+DYNAMO_STUDENT_TABLE="${APP_AWS_DYNAMODB_TABLE:-${AWS_DYNAMODB_TABLE:-${app_aWs_DYNAMODB_TABLE:-bodh-students}}}"
+DYNAMO_AUTH_TABLE="${APP_AWS_AUTH_TABLE:-${AWS_AUTH_TABLE:-${app_aWs_AUTH_TABLE:-bodh-auth}}}"
 
 # ── Helpers ───────────────────────────────────────────────────────────────────
 

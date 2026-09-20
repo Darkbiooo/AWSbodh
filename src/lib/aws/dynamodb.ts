@@ -13,34 +13,40 @@ import type { StudentRecord, TopicPerformance } from "@/types/student-record";
 // ── Clients ───────────────────────────────────────────────────────────────────
 
 const REGION =
+  process.env.APP_AWS_REGION ||
   process.env.AWS_REGION ||
   process.env.app_aWs_REGION ||
   process.env.aWs_REGION;
 
 const STUDENT_TABLE =
+  process.env.APP_AWS_DYNAMODB_TABLE ||
   process.env.AWS_DYNAMODB_TABLE ||
   process.env.app_aWs_DYNAMODB_TABLE ||
   process.env.aWs_DYNAMODB_TABLE ||
   "";
 
 const AUTH_TABLE =
+  process.env.APP_AWS_AUTH_TABLE ||
   process.env.AWS_AUTH_TABLE ||
   process.env.app_aWs_AUTH_TABLE ||
   process.env.aWs_AUTH_TABLE ||
   "";
 
 const STUDENT_RECORD_TABLE =
+  process.env.APP_AWS_STUDENT_RECORD_TABLE ||
   process.env.AWS_STUDENT_RECORD_TABLE ||
   process.env.app_aWs_STUDENT_RECORD_TABLE ||
   process.env.aWs_STUDENT_RECORD_TABLE ||
   "";
 
 const accessKeyId =
+  process.env.APP_AWS_ACCESS_KEY_ID ||
   process.env.AWS_ACCESS_KEY_ID ||
   process.env.app_aWs_ACCESS_KEY_ID ||
   process.env.aWs_ACCESS_KEY_ID;
 
 const secretAccessKey =
+  process.env.APP_AWS_SECRET_ACCESS_KEY ||
   process.env.AWS_SECRET_ACCESS_KEY ||
   process.env.app_aWs_SECRET_ACCESS_KEY ||
   process.env.aWs_SECRET_ACCESS_KEY;

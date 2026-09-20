@@ -10,14 +10,14 @@ const MODEL_ID =
 
 function hasExplicitCredentials() {
   return Boolean(
-    (process.env.AWS_ACCESS_KEY_ID || process.env.app_aWs_ACCESS_KEY_ID || process.env.aWs_ACCESS_KEY_ID) &&
-    (process.env.AWS_SECRET_ACCESS_KEY || process.env.app_aWs_SECRET_ACCESS_KEY || process.env.aWs_SECRET_ACCESS_KEY),
+    (process.env.APP_AWS_ACCESS_KEY_ID || process.env.AWS_ACCESS_KEY_ID || process.env.app_aWs_ACCESS_KEY_ID || process.env.aWs_ACCESS_KEY_ID) &&
+    (process.env.APP_AWS_SECRET_ACCESS_KEY || process.env.AWS_SECRET_ACCESS_KEY || process.env.app_aWs_SECRET_ACCESS_KEY || process.env.aWs_SECRET_ACCESS_KEY),
   );
 }
 
 export function isBedrockConfigured() {
   return Boolean(
-    (process.env.AWS_REGION || process.env.app_aWs_REGION || process.env.aWs_REGION) &&
+    (process.env.APP_AWS_REGION || process.env.AWS_REGION || process.env.app_aWs_REGION || process.env.aWs_REGION) &&
     (process.env.BEDROCK_MODEL_ID || process.env.app_BEDROCK_MODEL_ID) &&
     (hasExplicitCredentials() ||
       process.env.AWS_EXECUTION_ENV ||
@@ -39,16 +39,19 @@ function getClient() {
   if (!isBedrockConfigured()) return null;
 
   const region =
+    process.env.APP_AWS_REGION ||
     process.env.AWS_REGION ||
     process.env.app_aWs_REGION ||
     process.env.aWs_REGION;
 
   const accessKeyId =
+    process.env.APP_AWS_ACCESS_KEY_ID ||
     process.env.AWS_ACCESS_KEY_ID ||
     process.env.app_aWs_ACCESS_KEY_ID ||
     process.env.aWs_ACCESS_KEY_ID;
 
   const secretAccessKey =
+    process.env.APP_AWS_SECRET_ACCESS_KEY ||
     process.env.AWS_SECRET_ACCESS_KEY ||
     process.env.app_aWs_SECRET_ACCESS_KEY ||
     process.env.aWs_SECRET_ACCESS_KEY;

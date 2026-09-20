@@ -74,11 +74,13 @@ let DRY_RUN = false;
 async function initializeConfig() {
   await loadProjectEnv();
   REGION =
+    process.env.APP_AWS_REGION?.trim() ||
     process.env.AWS_REGION?.trim() ||
     process.env.app_aWs_REGION?.trim() ||
     process.env.aWs_REGION?.trim() ||
     "";
   BUCKET =
+    process.env.APP_AWS_S3_BUCKET?.trim() ||
     process.env.AWS_S3_BUCKET?.trim() ||
     process.env.app_aWs_S3_BUCKET?.trim() ||
     process.env.aWs_S3_BUCKET?.trim() ||
@@ -87,7 +89,7 @@ async function initializeConfig() {
 
   if (!REGION || !BUCKET) {
     console.error(
-      "❌  AWS_REGION and AWS_S3_BUCKET must be set.\n" +
+      "❌  AWS_REGION (or APP_AWS_REGION) and AWS_S3_BUCKET (or APP_AWS_S3_BUCKET) must be set.\n" +
         "    Example:\n" +
         "      AWS_REGION=ap-southeast-2 AWS_S3_BUCKET=regional-dsa-learning npx tsx scripts/seed-s3.ts",
     );
@@ -100,9 +102,11 @@ let _client: S3Client | null = null;
 function getClient(): S3Client {
   if (!_client) {
     const accessKeyId =
+      process.env.APP_AWS_ACCESS_KEY_ID?.trim() ||
       process.env.AWS_ACCESS_KEY_ID?.trim() ||
       process.env.app_aWs_ACCESS_KEY_ID?.trim();
     const secretAccessKey =
+      process.env.APP_AWS_SECRET_ACCESS_KEY?.trim() ||
       process.env.AWS_SECRET_ACCESS_KEY?.trim() ||
       process.env.app_aWs_SECRET_ACCESS_KEY?.trim();
 
