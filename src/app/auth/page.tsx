@@ -40,8 +40,8 @@ function AuthForm() {
         headers: { "content-type": "application/json" },
         body: JSON.stringify({ email: formatCheck.normalizedEmail }),
       });
-      const data = await res.json();
-      if (!res.ok) { setError(data.error ?? "Something went wrong."); return; }
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) { setError(data.error ?? `Server error (${res.status}). Please check environment setup.`); return; }
       setInfo("Check your inbox — a 6-digit code is on its way.");
       setStep("otp");
     } finally {
@@ -59,7 +59,7 @@ function AuthForm() {
         headers: { "content-type": "application/json" },
         body: JSON.stringify({ email, code }),
       });
-      const data = await res.json() as { ok?: boolean; isNewUser?: boolean; error?: string };
+      const data = (await res.json().catch(() => ({}))) as { ok?: boolean; isNewUser?: boolean; error?: string };
       if (!res.ok) { setError(data.error ?? "Invalid or expired code."); return; }
 
       if (data.isNewUser) {
