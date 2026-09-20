@@ -69,7 +69,7 @@ function AuthForm() {
       }
 
       // Returning user — session cookie is already set, go to destination
-      router.push(nextPath);
+      window.location.href = nextPath;
     } finally {
       setLoading(false);
     }
@@ -86,9 +86,12 @@ function AuthForm() {
           method: "POST",
           headers: { "content-type": "application/json" },
           body: JSON.stringify({ name: name.trim(), language }),
-        });
+        }).catch((err) => console.warn("Student profile save error:", err));
       }
-      router.push("/onboarding");
+      window.location.href = "/onboarding";
+    } catch (err) {
+      console.warn("Signup navigation fallback:", err);
+      window.location.href = "/onboarding";
     } finally {
       setLoading(false);
     }
