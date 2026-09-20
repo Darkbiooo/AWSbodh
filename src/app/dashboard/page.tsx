@@ -37,8 +37,8 @@ export default async function DashboardPage({
 
   if (!userSession) {
     const allowDemo =
-      process.env.app_ALLOW_DEMO === "true" ||
       process.env.ALLOW_DEMO === "true" ||
+      process.env.app_ALLOW_DEMO === "true" ||
       process.env.NODE_ENV !== "production";
     if (!allowDemo) {
       redirect("/auth");

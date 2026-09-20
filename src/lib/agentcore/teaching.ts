@@ -164,7 +164,7 @@ async function tryAgentCore(
   language: "en" | "hi",
 ): Promise<TeachingResult | null> {
   const url =
-    process.env.app_AGENTCORE_RUNTIME_URL || process.env.AGENTCORE_RUNTIME_URL;
+    process.env.AGENTCORE_RUNTIME_URL || process.env.app_AGENTCORE_RUNTIME_URL;
   if (!url) return null;
 
   try {

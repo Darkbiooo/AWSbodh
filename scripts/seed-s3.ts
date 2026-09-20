@@ -7,12 +7,12 @@
  *   npx tsx scripts/seed-s3.ts
  *
  * Required env vars (set in .env.local or shell):
- *   app_aWs_REGION          – e.g. ap-south-1
- *   app_aWs_S3_BUCKET       – e.g. bodh-content-prod
+ *   AWS_REGION              – e.g. ap-southeast-2
+ *   AWS_S3_BUCKET           – e.g. regional-dsa-learning
  *
  * Optional:
- *   app_aWs_ACCESS_KEY_ID / app_aWs_SECRET_ACCESS_KEY  (falls back to instance role / SSO)
- *   SEED_DRY_RUN=true   – print what would be uploaded without touching S3
+ *   AWS_ACCESS_KEY_ID / AWS_SECRET_ACCESS_KEY  (falls back to instance role / SSO)
+ *   SEED_DRY_RUN=true       – print what would be uploaded without touching S3
  */
 
 import { readdir, readFile, access } from "node:fs/promises";
@@ -74,10 +74,12 @@ let DRY_RUN = false;
 async function initializeConfig() {
   await loadProjectEnv();
   REGION =
+    process.env.AWS_REGION?.trim() ||
     process.env.app_aWs_REGION?.trim() ||
     process.env.aWs_REGION?.trim() ||
     "";
   BUCKET =
+    process.env.AWS_S3_BUCKET?.trim() ||
     process.env.app_aWs_S3_BUCKET?.trim() ||
     process.env.aWs_S3_BUCKET?.trim() ||
     "";
@@ -85,9 +87,9 @@ async function initializeConfig() {
 
   if (!REGION || !BUCKET) {
     console.error(
-      "❌  app_aWs_REGION and app_aWs_S3_BUCKET must be set.\n" +
+      "❌  AWS_REGION and AWS_S3_BUCKET must be set.\n" +
         "    Example:\n" +
-        "      app_aWs_REGION=ap-south-1 app_aWs_S3_BUCKET=bodh-content-prod npx tsx scripts/seed-s3.ts",
+        "      AWS_REGION=ap-southeast-2 AWS_S3_BUCKET=regional-dsa-learning npx tsx scripts/seed-s3.ts",
     );
     process.exit(1);
   }
@@ -96,7 +98,21 @@ async function initializeConfig() {
 // Client is created lazily so SEED_DRY_RUN=true never validates the region
 let _client: S3Client | null = null;
 function getClient(): S3Client {
-  if (!_client) _client = new S3Client({ region: REGION });
+  if (!_client) {
+    const accessKeyId =
+      process.env.AWS_ACCESS_KEY_ID?.trim() ||
+      process.env.app_aWs_ACCESS_KEY_ID?.trim();
+    const secretAccessKey =
+      process.env.AWS_SECRET_ACCESS_KEY?.trim() ||
+      process.env.app_aWs_SECRET_ACCESS_KEY?.trim();
+
+    _client = new S3Client({
+      region: REGION,
+      ...(accessKeyId && secretAccessKey
+        ? { credentials: { accessKeyId, secretAccessKey } }
+        : {}),
+    });
+  }
   return _client;
 }
 const SEED_ROOT = join(process.cwd(), "content", "seed");

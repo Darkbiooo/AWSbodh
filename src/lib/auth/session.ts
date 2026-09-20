@@ -4,10 +4,10 @@ import { SignJWT } from "jose/jwt/sign";
 export const sessionCookie = "bodh_session";
 export function getAuthSecret(): Uint8Array {
   const secretKey =
-    process.env.app_AUTH_SECRET ||
-    process.env.app_JWT_SECRET ||
     process.env.AUTH_SECRET ||
-    process.env.JWT_SECRET;
+    process.env.JWT_SECRET ||
+    process.env.app_AUTH_SECRET ||
+    process.env.app_JWT_SECRET;
 
   if (!secretKey) {
     console.warn(
@@ -67,8 +67,8 @@ export async function getSessionOrDemo(
   if (session) return session;
 
   const allowDemo =
-    process.env.app_ALLOW_DEMO === "true" ||
     process.env.ALLOW_DEMO === "true" ||
+    process.env.app_ALLOW_DEMO === "true" ||
     process.env.NODE_ENV !== "production";
 
   if (!allowDemo) {

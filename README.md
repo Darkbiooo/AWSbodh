@@ -87,20 +87,24 @@ Create a `.env.local` file in the project root. All variables are optional for l
 
 ```bash
 # AWS (required for full AI + persistence features)
-AWS_REGION=ap-south-1
-AWS_S3_BUCKET=bodh-content-prod
+AWS_REGION=ap-southeast-2
+AWS_S3_BUCKET=regional-dsa-learning
+AWS_ACCESS_KEY_ID=<your-access-key-id>
+AWS_SECRET_ACCESS_KEY=<your-secret-access-key>
 AWS_DYNAMODB_TABLE=bodh-students
 AWS_AUTH_TABLE=bodh-auth
+AWS_STUDENT_RECORD_TABLE=bodh-student-records
 
 # Amazon Bedrock
 BEDROCK_MODEL_ID=amazon.nova-lite-v1:0
 
 # Auth (required in production)
+AUTH_SECRET=<generate with: openssl rand -base64 32>
 JWT_SECRET=<generate with: openssl rand -base64 32>
 
 # Email delivery via Resend (dev prints codes to console without this)
 RESEND_API_KEY=re_...
-RESEND_FROM_EMAIL=noreply@yourdomain.com
+RESEND_FROM_EMAIL=onboarding@resend.dev
 
 # AgentCore (optional — falls back to direct Bedrock calls)
 AGENTCORE_RUNTIME_URL=https://...
