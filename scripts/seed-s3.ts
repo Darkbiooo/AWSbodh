@@ -92,7 +92,7 @@ async function initializeConfig() {
     process.exit(1);
   }
 }
-``
+
 // Client is created lazily so SEED_DRY_RUN=true never validates the region
 let _client: S3Client | null = null;
 function getClient(): S3Client {
